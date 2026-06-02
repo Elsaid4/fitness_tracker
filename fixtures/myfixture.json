@@ -1,0 +1,7 @@
+[{
+    "model": "accounts.profile",
+    "pk": 1,
+    "fields": {
+        "user": 1
+    }
+}]
