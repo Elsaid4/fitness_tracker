@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, ProfileForm, LoginForm
 from .models import Profile
@@ -31,7 +31,7 @@ def login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:
-                #login(request, user)
+                auth_login(request, user)
                 return redirect('dashboard')
             else:
                 form.add_error(None, 'Credenziali non valide')
@@ -42,5 +42,5 @@ def login(request):
 
 @login_required
 def logout(request):
-    logout(request)
+    auth_logout(request)
     return redirect('/')
