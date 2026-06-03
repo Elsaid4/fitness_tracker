@@ -13,18 +13,16 @@
             <h2>Login</h2>
             <form method="post">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="id_username" class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" id="id_username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="id_password" class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" id="id_password" required>
-                </div>
+                {{ form.as_p }}
+                {% if form.non_field_errors %}
+                    <div class="error">{{ form.non_field_errors }}</div>
+                {% endif %}
                 <button type="submit" class="btn btn-primary">Login</button>
+                <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
             </form>
         </div>
     </div>
 </div>
+
 
 {% endblock %}
