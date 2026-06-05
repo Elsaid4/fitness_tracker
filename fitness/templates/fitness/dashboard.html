@@ -20,18 +20,9 @@
             {% else %}
                 <p>No exercises available yet.</p>
             {% endif %}
+
+            <a href="{% url 'workout' %}" class="btn btn-primary mt-3">Create New Workout</a>
         </div>
     </div>
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                {% if form.non_field_errors %}
-                    <div class="error">{{ form.non_field_errors }}</div>
-                {% endif %}
-                <button type="submit" class="btn btn-primary">Create Workout</button>
-            </form>
-        </div>
 </div>
 {% endblock %}
