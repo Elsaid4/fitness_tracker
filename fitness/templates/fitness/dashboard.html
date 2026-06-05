@@ -8,5 +8,30 @@
             <p>This is your fitness dashboard. Here you can track your workouts, monitor your progress, and achieve your fitness goals.</p>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2>All Exercises</h2>
+             {% if exercises %}
+                <ul>
+                    {% for exercise in exercises %}
+                        <li>{{ exercise.name }} - {{ exercise.description }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No exercises available yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if form.non_field_errors %}
+                    <div class="error">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">Create Workout</button>
+            </form>
+        </div>
 </div>
 {% endblock %}

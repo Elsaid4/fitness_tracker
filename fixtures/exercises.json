@@ -1,0 +1,47 @@
+[
+    {
+        "model": "fitness.exercise",
+        "pk": 1,
+        "fields": {
+            "name": "Running",
+            "description": "A cardiovascular exercise that involves running at a steady pace.",
+            "calories_burned_per_minute": 10.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 2,
+        "fields": {
+            "name": "Cycling",
+            "description": "A low-impact cardiovascular exercise that involves riding a bicycle.",
+            "calories_burned_per_minute": 8.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 3,
+        "fields": {
+            "name": "Swimming",
+            "description": "A full-body workout that involves swimming in water.",
+            "calories_burned_per_minute": 11.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 4,
+        "fields": {
+            "name": "Weight Lifting",
+            "description": "A strength training exercise that involves lifting weights.",
+            "calories_burned_per_minute": 6.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 5,
+        "fields": {
+            "name": "Yoga",
+            "description": "A mind-body practice that combines physical postures, breathing exercises, and meditation.",
+            "calories_burned_per_minute": 3.0
+        }
+    }
+]

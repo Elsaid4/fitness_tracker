@@ -14,10 +14,8 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Crea il profilo automaticamente
             Profile.objects.create(user=user)
-            # Accedi l'utente subito dopo la registrazione
-            login(request, user)
+            auth_login(request, user)
             return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
