@@ -36,13 +36,16 @@ def save_workout(request, workout_name):
         
         workout_exercise = WorkoutExercise.objects.create(workout=workout, exercise=exercise_obj)
         
-        reps_list = request.POST.getlist(f'exercise_{i}_reps[]')
-        weights_list = request.POST.getlist(f'exercise_{i}_weight[]')
+        reps_list       = request.POST.getlist(f'exercise_{i}_reps[]')
+        weights_list    = request.POST.getlist(f'exercise_{i}_weight[]')
+        completed_list  = request.POST.getlist(f'exercise_{i}_completed[]')
         
-        for reps, weight in zip(reps_list, weights_list):
+        for reps, weight, completed in zip(reps_list, weights_list, completed_list):
+            is_completed = completed == "true"
             Set.objects.create(
-                workout_exercise=workout_exercise,
-                repetitions=reps,
-                weight=weight
+                workout_exercise    = workout_exercise,
+                repetitions         = reps,
+                weight              = weight,
+                completed           = is_completed
             )
     return redirect('dashboard')

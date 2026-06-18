@@ -29,13 +29,12 @@
 </div>
 
 <script>
-    let exerciseCounter = 0; // Contatore globale per rendere ogni esercizio unico
+    let exerciseCounter = 0;
 
     document.querySelector('#add-exercise-btn').addEventListener('click', function() {
         exerciseCounter++;
         const container = document.getElementById('sets-container');
         
-        // Creiamo un blocco esercizio con un ID basato sul counter
         const newExerciseBlock = document.createElement('div');
         newExerciseBlock.className = 'exercise-block border p-3 mb-3';
         newExerciseBlock.innerHTML = `
@@ -50,11 +49,13 @@
                 </div>
             </div>
             <div class="sets-list">
-                </div>
-            <button type="button" class="btn btn-outline-danger add-set-btn" data-ex-id="${exerciseCounter}">+ Aggiungi Set</button>
+            </div>
+            <button type="button" class="btn btn-outline-danger add-set-btn mt-4" data-ex-id="${exerciseCounter}">+ Aggiungi Set</button>
         `;
         container.appendChild(newExerciseBlock);
     });
+
+    var setCounter = 0;
 
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('add-set-btn')) {
@@ -62,8 +63,7 @@
             const setsList = e.target.closest('.exercise-block').querySelector('.sets-list');
             
             const newSetDiv = document.createElement('div');
-            newSetDiv.className = 'row mt-1';
-            // Usiamo lo stesso exId nei nomi degli input
+            newSetDiv.className = 'row mt-1 set-item-row';
             newSetDiv.innerHTML = `
                 <div class="col">
                     <input type="number" name="exercise_${exId}_reps[]" class="form-control" placeholder="Ripetizioni" required>
@@ -71,13 +71,53 @@
                 <div class="col">
                     <input type="number" name="exercise_${exId}_weight[]" class="form-control" placeholder="Peso (kg)" required>
                 </div>
-                <div class="col-1">
-                <input type="checkbox" class="btn-check" id="check-${Date.now()}" name="completed[]" autocomplete="off">
-                    <label class="btn btn-outline-success" for="check-${Date.now()}">✓</label>
+                <div class="col-auto d-flex gap-1 align-items-center">
+                    <input type="hidden" name="exercise_${exId}_completed[]" class="completed-hidden-input" value="false">
+                    
+                    <button type="button" class="btn btn-outline-success toggle-completed-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                        </svg>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-danger remove-set-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        </svg>
+                    </button>
                 </div>
             `;
             setsList.appendChild(newSetDiv);
         }
+
+        if (e.target.closest('.remove-set-btn')) {
+            const rowToDestroy = e.target.closest('.set-item-row');
+            if (rowToDestroy) {
+                rowToDestroy.remove(); 
+            }
+        }
     });
+
+    document.addEventListener('click', function(e) {
+        // Intercettiamo il click sul finto checkbox
+        const toggleBtn = e.target.closest('.toggle-completed-btn');
+        if (toggleBtn) {
+            const container = toggleBtn.closest('.col-auto');
+            const hiddenInput = container.querySelector('.completed-hidden-input');
+            
+            if (hiddenInput.value === "false") {
+                hiddenInput.value = "true";
+                toggleBtn.classList.remove('btn-outline-success');
+                toggleBtn.classList.add('btn-success'); 
+            } else {
+                hiddenInput.value = "false";
+                toggleBtn.classList.remove('btn-success');
+                toggleBtn.classList.add('btn-outline-success');
+            }
+        }
+    });
+
+
 </script>
 {% endblock %}
