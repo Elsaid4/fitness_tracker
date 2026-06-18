@@ -1,47 +1,92 @@
 [
     {
         "model": "fitness.exercise",
-        "pk": 1,
-        "fields": {
-            "name": "Running",
-            "description": "A cardiovascular exercise that involves running at a steady pace.",
-            "calories_burned_per_minute": 10.0
-        }
-    },
-    {
-        "model": "fitness.exercise",
         "pk": 2,
         "fields": {
-            "name": "Cycling",
-            "description": "A low-impact cardiovascular exercise that involves riding a bicycle.",
-            "calories_burned_per_minute": 8.0
+            "name": "Squat con bilanciere",
+            "description": "A fundamental compound exercise that targets the quadriceps, glutes, and hamstrings.",
+            "calories_burned_per_minute": 8.5
         }
     },
     {
         "model": "fitness.exercise",
         "pk": 3,
         "fields": {
-            "name": "Swimming",
-            "description": "A full-body workout that involves swimming in water.",
-            "calories_burned_per_minute": 11.0
+            "name": "Panca piana con bilanciere",
+            "description": "A classic upper body compound movement focusing on the chest, anterior deltoids, and triceps.",
+            "calories_burned_per_minute": 6.5
         }
     },
     {
         "model": "fitness.exercise",
         "pk": 4,
         "fields": {
-            "name": "Weight Lifting",
-            "description": "A strength training exercise that involves lifting weights.",
-            "calories_burned_per_minute": 6.0
+            "name": "Stacco da terra",
+            "description": "A powerful full-body lift targeting the posterior chain, including the hamstrings, glutes, and lower back.",
+            "calories_burned_per_minute": 9.5
         }
     },
     {
         "model": "fitness.exercise",
         "pk": 5,
         "fields": {
-            "name": "Yoga",
-            "description": "A mind-body practice that combines physical postures, breathing exercises, and meditation.",
-            "calories_burned_per_minute": 3.0
+            "name": "Curl con manubri",
+            "description": "An isolation exercise designed to target and build strength in the biceps.",
+            "calories_burned_per_minute": 4.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 6,
+        "fields": {
+            "name": "Shoulder press con manubri",
+            "description": "An overhead pressing movement that primarily targets the deltoids and triceps.",
+            "calories_burned_per_minute": 5.5
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 7,
+        "fields": {
+            "name": "Lat machine avanti",
+            "description": "An upper-body pulling exercise that builds width and strength in the latissimus dorsi muscles.",
+            "calories_burned_per_minute": 5.5
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 8,
+        "fields": {
+            "name": "Leg press",
+            "description": "A machine-based lower body exercise that isolates the quadriceps, glutes, and hamstrings without loading the spine.",
+            "calories_burned_per_minute": 7.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 9,
+        "fields": {
+            "name": "Pushdown cavi per tricipiti",
+            "description": "An isolation movement performed on a cable machine to target the lateral and medial heads of the triceps.",
+            "calories_burned_per_minute": 4.0
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 10,
+        "fields": {
+            "name": "Affondi con manubri",
+            "description": "A unilateral lower body exercise that improves balance while working the quads, glutes, and hamstrings.",
+            "calories_burned_per_minute": 7.5
+        }
+    },
+    {
+        "model": "fitness.exercise",
+        "pk": 11,
+        "fields": {
+            "name": "Rematore con bilanciere",
+            "description": "A compound horizontal pulling exercise that builds thickness in the upper and mid back.",
+            "calories_burned_per_minute": 7.0
         }
     }
 ]
