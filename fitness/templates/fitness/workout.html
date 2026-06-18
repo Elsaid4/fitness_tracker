@@ -4,7 +4,11 @@
 <div class="container mt-5">    
     <div class="row justify-content-center mt-4">
         <div class="col-md-8">
-            <h2>{{ workout.name }}</h2>
+            <div>
+                <h2 class="mb-0">{{ workout.name }}</h2>
+                <h4>Volume Totale: <span id="total-weight-display" class="fw-bold text-info">{{ tot_weight|default:0 }}</span> kg</h4>
+            </div>
+            <div class="fs-3 fw-bold text-secondary" id="workout-timer">00:00:00</div>
             
             <form method="POST" action="{% url 'save_workout' workout.name %}">
                 {% csrf_token %}
@@ -36,7 +40,7 @@
         const container = document.getElementById('sets-container');
         
         const newExerciseBlock = document.createElement('div');
-        newExerciseBlock.className = 'exercise-block border p-3 mb-3';
+        newExerciseBlock.className = 'exercise-block border bg-light-subtle p-3 mb-3 justify-content-center align-items-center';
         newExerciseBlock.innerHTML = `
             <div class="row mb-2">
                 <div class="col">
@@ -47,10 +51,11 @@
                         {% endfor %}
                     </select>
                 </div>
+                <div class="sets-list">
+
+                </div>
+                <button type="button" class="btn btn-outline-danger add-set-btn mt-2" data-ex-id="${exerciseCounter}">+ Aggiungi Set</button>
             </div>
-            <div class="sets-list">
-            </div>
-            <button type="button" class="btn btn-outline-danger add-set-btn mt-4" data-ex-id="${exerciseCounter}">+ Aggiungi Set</button>
         `;
         container.appendChild(newExerciseBlock);
     });
@@ -63,12 +68,12 @@
             const setsList = e.target.closest('.exercise-block').querySelector('.sets-list');
             
             const newSetDiv = document.createElement('div');
-            newSetDiv.className = 'row mt-1 set-item-row';
+            newSetDiv.className = 'row m-1 set-item-row';
             newSetDiv.innerHTML = `
-                <div class="col">
+                <div class="col p-2">
                     <input type="number" name="exercise_${exId}_reps[]" class="form-control" placeholder="Ripetizioni" required>
                 </div>
-                <div class="col">
+                <div class="col p-2">
                     <input type="number" name="exercise_${exId}_weight[]" class="form-control" placeholder="Peso (kg)" required>
                 </div>
                 <div class="col-auto d-flex gap-1 align-items-center">
@@ -95,13 +100,14 @@
             const rowToDestroy = e.target.closest('.set-item-row');
             if (rowToDestroy) {
                 rowToDestroy.remove(); 
+                calculateTotalWeight();
             }
         }
     });
 
     document.addEventListener('click', function(e) {
-        // Intercettiamo il click sul finto checkbox
         const toggleBtn = e.target.closest('.toggle-completed-btn');
+        const row = e.target.closest('.set-item-row')
         if (toggleBtn) {
             const container = toggleBtn.closest('.col-auto');
             const hiddenInput = container.querySelector('.completed-hidden-input');
@@ -110,14 +116,67 @@
                 hiddenInput.value = "true";
                 toggleBtn.classList.remove('btn-outline-success');
                 toggleBtn.classList.add('btn-success'); 
+                row.style = 'background-color: lightgreen;';
             } else {
                 hiddenInput.value = "false";
                 toggleBtn.classList.remove('btn-success');
                 toggleBtn.classList.add('btn-outline-success');
+                row.style = 'background-color: transparent;';
             }
+            calculateTotalWeight();
         }
     });
 
+    // --- LOGICA DEL TIMER ---
+    let startTime = Date.now();
+    let timerInterval;
+
+    function updateTimer() {
+        let elapsedTime = Date.now() - startTime; // Millisecondi passati
+
+        // Calcolo ore, minuti e secondi
+        let hours = Math.floor(elapsedTime / 3600000);
+        let minutes = Math.floor((elapsedTime % 3600000) / 60000);
+        let seconds = Math.floor((elapsedTime % 60000) / 1000);
+
+        // Formattazione con lo zero iniziale
+        let formattedTime = 
+            String(hours).padStart(2, '0') + ':' +
+            String(minutes).padStart(2, '0') + ':' +
+            String(seconds).padStart(2, '0');
+
+        // Mostra il tempo a schermo
+        document.getElementById('workout-timer').innerText = formattedTime;
+    }
+
+    // Fai partire il timer immediatamente all'apertura della pagina (ogni 1 secondo)
+    timerInterval = setInterval(updateTimer, 1000);
+
+    function calculateTotalWeight() {
+        let globalTotal = 0;
+
+        document.querySelectorAll('.set-item-row').forEach(row => {
+            const hiddenInput = row.querySelector('.completed-hidden-input');
+            
+            if (hiddenInput && hiddenInput.value === "true") {
+                const repsInput = row.querySelector('input[name*="_reps[]"]');
+                const weightInput = row.querySelector('input[name*="_weight[]"]');
+                
+                const reps = parseFloat(repsInput.value) || 0;
+                const weight = parseFloat(weightInput.value) || 0;
+                
+                globalTotal += (reps * weight);
+            }
+        });
+
+        document.getElementById('total-weight-display').innerText = globalTotal.toFixed(1);
+    }
+
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('input[name*="_reps[]"], input[name*="_weight[]"]')) {
+            calculateTotalWeight();
+        }
+    });
 
 </script>
-{% endblock %}
+{% endblock %}0

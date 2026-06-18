@@ -14,13 +14,13 @@ def dashboard(request):
 
 
 def workout_view(request):
-    # Se non c'è un ID, creiamo il workout (solo la prima volta)
-    # workout = Workout.objects.create(name=f'Workout di {request.user} - {timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
     workout = Workout(name=f'Workout di {request.user} - {timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
     exercises = []
     all_exercises = Exercise.objects.all()
+    total_weight = 0
+    
 
-    return render(request, 'fitness/workout.html', {'workout': workout, 'exercises': exercises, 'all_exercises': all_exercises})
+    return render(request, 'fitness/workout.html', {'workout': workout, 'exercises': exercises, 'all_exercises': all_exercises, 'tot_weight': total_weight})
 
 
 def save_workout(request, workout_name):
