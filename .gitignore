@@ -3,4 +3,4 @@ __pycache__/
 .env
 *.log
 EOF
-db.sqlite3
+.db.squlite3

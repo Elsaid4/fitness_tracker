@@ -6,30 +6,11 @@
         <div class="col-md-8">
             <h2>{{ workout.name }}</h2>
             
-            <form method="POST" action="{% url 'save_workout' workout.id %}">
+            <form method="POST" action="{% url 'save_workout' workout.name %}">
                 {% csrf_token %}
                 
                 <div id="sets-container">
-                    {% for e in exercises %}
-                        <div class="row g-2 mb-2 set-row">
-                            <div class="col">
-                                <select name="exercise_name[]" class="form-control" required>
-                                    <option value="">Seleziona Esercizio</option>
-                                    {% for ex in all_exercises %}
-                                        <option value="{{ ex.name }}" {% if ex.name == e.name %}selected{% endif %}>{{ ex.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            {% for s in e.sets.all %}
-                                <div class="col">
-                                    <p>{{ s.repetitions }}</p>
-                                </div>
-                                <div class="col">
-                                    <p>{{ s.weight }}</p>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
+
                 </div>
 
                 <div class="mt-3">
@@ -48,51 +29,54 @@
 </div>
 
 <script>
+    let exerciseCounter = 0; // Contatore globale per rendere ogni esercizio unico
+
     document.querySelector('#add-exercise-btn').addEventListener('click', function() {
+        exerciseCounter++;
         const container = document.getElementById('sets-container');
         
-        // Generiamo una riga vuota con i campi di input pronti da compilare
-        // Usiamo le parentesi quadre [] nel name così Django riceverà una lista di valori
-        const newRowHtml = `
-            <div class="row g-2 mb-2 set-row">
+        // Creiamo un blocco esercizio con un ID basato sul counter
+        const newExerciseBlock = document.createElement('div');
+        newExerciseBlock.className = 'exercise-block border p-3 mb-3';
+        newExerciseBlock.innerHTML = `
+            <div class="row mb-2">
                 <div class="col">
-                    <select name="exercise_name[]" class="form-control" required>
+                    <select name="exercise_${exerciseCounter}_name" class="form-control" required>
                         <option value="">Seleziona Esercizio</option>
                         {% for ex in all_exercises %}
                             <option value="{{ ex.name }}">{{ ex.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                {% for s in e.sets.all %}
-                    <div class="col">
-                        <p>{{ s.repetitions }}</p>
-                    </div>
-                    <div class="col">
-                        <p>{{ s.weight }}</p>
-                    </div>
-                {% endfor %}
-                <button type="button" class="btn btn-outline-danger add-set-btn"> Aggiungi set</button>
             </div>
+            <div class="sets-list">
+                </div>
+            <button type="button" class="btn btn-outline-danger add-set-btn" data-ex-id="${exerciseCounter}">+ Aggiungi Set</button>
         `;
-        
-        // Inserisce la riga vuota nel contenitore
-        container.insertAdjacentHTML('beforeend', newRowHtml);
+        container.appendChild(newExerciseBlock);
     });
 
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('add-set-btn')) {
-            const setRow = e.target.closest('.set-row');
-            const newSetHtml = `
-                <div class="row">
-                    <div class="col">
-                        <input type="number" name="repetitions[]" class="form-control" placeholder="Ripetizioni" required>
-                    </div>
-                    <div class="col">
-                        <input type="number" name="weight[]" class="form-control" placeholder="Peso (kg)" required>
-                    </div>
+            const exId = e.target.getAttribute('data-ex-id');
+            const setsList = e.target.closest('.exercise-block').querySelector('.sets-list');
+            
+            const newSetDiv = document.createElement('div');
+            newSetDiv.className = 'row mt-1';
+            // Usiamo lo stesso exId nei nomi degli input
+            newSetDiv.innerHTML = `
+                <div class="col">
+                    <input type="number" name="exercise_${exId}_reps[]" class="form-control" placeholder="Ripetizioni" required>
+                </div>
+                <div class="col">
+                    <input type="number" name="exercise_${exId}_weight[]" class="form-control" placeholder="Peso (kg)" required>
+                </div>
+                <div class="col-1">
+                <input type="checkbox" class="btn-check" id="check-${Date.now()}" name="completed[]" autocomplete="off">
+                    <label class="btn btn-outline-success" for="check-${Date.now()}">✓</label>
                 </div>
             `;
-            setRow.insertAdjacentHTML('beforeend', newSetHtml);
+            setsList.appendChild(newSetDiv);
         }
     });
 </script>

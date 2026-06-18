@@ -10,6 +10,7 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
+            <a href="{% url 'workout' %}" class="btn btn-primary mt-3">Create New Workout</a>
             <h2>All Exercises</h2>
              {% if exercises %}
                 <ul>
@@ -20,8 +21,6 @@
             {% else %}
                 <p>No exercises available yet.</p>
             {% endif %}
-
-            <a href="{% url 'workout' %}" class="btn btn-primary mt-3">Create New Workout</a>
         </div>
     </div>
 </div>
