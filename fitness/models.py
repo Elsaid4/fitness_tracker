@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Exercise(models.Model):
     """
@@ -19,10 +20,18 @@ class Workout(models.Model):
     """
     name = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='workouts'
+    )
 
     def __str__(self):
-        return f"{self.name} - {self.timestamp.strftime('%d/%m/%Y')}"
+        user_part = f" by {self.user}" if self.user else ""
+        return f"{self.name} - {self.timestamp.strftime('%d/%m/%Y')}{user_part}"
 
 
 class WorkoutExercise(models.Model):

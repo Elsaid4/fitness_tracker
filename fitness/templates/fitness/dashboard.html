@@ -11,11 +11,22 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <a href="{% url 'workout' %}" class="btn btn-primary mt-3">Create New Workout</a>
-            <h2>All Exercises</h2>
-             {% if exercises %}
+            <h2>All Workouts</h2>
+             {% if workouts %}
                 <ul>
-                    {% for exercise in exercises %}
-                        <li>{{ exercise.name }} - {{ exercise.description }}</li>
+                    {% for w in workouts %}
+                        <button class="btn btn-secondary m-2">{{ w.name }}</button>
+                        
+                        <ul>
+                            {% for we in w.workout_exercises.all %}
+                                <button class="btn btn-info">{{ we.exercise.name }}</button>
+                                <ul>
+                                    {% for s in we.sets.all %}
+                                    <li class="m-2">{{ s.repetitions }} reps @ {{ s.weight }}kg {% if s.completed %}✅{% endif %}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </ul>
                     {% endfor %}
                 </ul>
             {% else %}
