@@ -21,6 +21,8 @@ class Workout(models.Model):
     name = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    duration = models.CharField(max_length=8, default="00:00:00")
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -31,6 +33,7 @@ class Workout(models.Model):
 
     def __str__(self):
         user_part = f" by {self.user}" if self.user else ""
+        duration_part = f" ({self.duration})" if self.duration else ""
         return f"{self.name} - {self.timestamp.strftime('%d/%m/%Y')}{user_part}"
 
 

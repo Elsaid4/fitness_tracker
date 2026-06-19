@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ workout.name }}</h1>
+    <p class="text-muted">
+        <strong>Data:</strong> {{ workout.timestamp|date:"d/m/Y H:i" }} 
+        <strong>Utente:</strong> {{ workout.user.username }}
+        <strong>Durata:</strong> {{ workout.duration }}
+    </p>
+
+    {% if workout_exercises %}
+        <div class="mt-4">
+            {% for workout_exercise in workout_exercises %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>{{ workout_exercise.exercise.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">{{ workout_exercise.exercise.description }}</p>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Serie</th>
+                                    <th>Ripetizioni</th>
+                                    <th>Peso (kg)</th>
+                                    <th>Completato</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for set in workout_exercise.sets.all %}
+                                    <tr>
+                                        <td>#{{ forloop.counter }}</td>
+                                        <td>{{ set.repetitions }}</td>
+                                        <td>{{ set.weight }}</td>
+                                        <td>
+                                            {% if set.completed %}
+                                                <span class="badge bg-success">Sì</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">No</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="alert alert-info mt-4">Nessun esercizio registrato per questo workout.</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Torna al Dashboard</a>
+    </div>
+</div>
+{% endblock %}

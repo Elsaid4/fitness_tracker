@@ -7,7 +7,7 @@ from django.utils import timezone
 
 @login_required
 def dashboard(request):
-    workouts = Workout.objects.filter(user=request.user)
+    workouts = Workout.objects.filter(user=request.user).order_by('-timestamp')
     workout_exercises = []
     sets = []
     for w in workouts:
@@ -15,7 +15,6 @@ def dashboard(request):
 
     for we in workout_exercises:
         sets.extend(Set.objects.filter(workout_exercise=we))
-    print(sets)
 
     return render(request, 'fitness/dashboard.html', {'user': request.user, 'workouts': workouts, 'exercises': workout_exercises, 'sets': sets})
 
@@ -34,8 +33,13 @@ def workout_view(request):
 def save_workout(request, workout_name):
     if request.method == 'POST':
         current_user = request.user
-        workout = Workout.objects.create(name=workout_name, user=current_user)
-
+        duration_str = request.POST.get('workout_duration', '00:00:00')
+        
+        workout = Workout.objects.create(
+            name=workout_name, 
+            user=current_user,
+            duration=duration_str
+        )
         # Ottieni tutti gli indici degli esercizi inviati
         exercise_indices = [k.split('_')[1] for k in request.POST.keys() if '_name' in k]
 
@@ -57,5 +61,19 @@ def save_workout(request, workout_name):
                     weight              = weight,
                     completed           = is_completed
                 )
-        return redirect('dashboard')
+        return redirect('workout_detail', workout_id=workout.id)
     return redirect('dashboard')
+
+@login_required
+def workout_detail(request, workout_id):
+    workout = get_object_or_404(Workout, id=workout_id, user=request.user)
+    workout_exercises = WorkoutExercise.objects.filter(workout=workout)
+    sets_by_exercise = {}
+    for we in workout_exercises:
+        sets_by_exercise[we] = Set.objects.filter(workout_exercise=we)
+    
+    return render(request, 'fitness/workout_detail.html', {
+        'workout': workout,
+        'workout_exercises': workout_exercises,
+        'sets_by_exercise': sets_by_exercise
+    })

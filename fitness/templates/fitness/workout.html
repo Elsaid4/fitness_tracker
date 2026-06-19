@@ -12,6 +12,7 @@
             
             <form method="POST" action="{% url 'save_workout' workout.name %}">
                 {% csrf_token %}
+                <input type="hidden" name="workout_duration" id="workout-duration-input" value="00:00:00">
                 
                 <div id="sets-container">
 
@@ -147,6 +148,7 @@
 
         // Mostra il tempo a schermo
         document.getElementById('workout-timer').innerText = formattedTime;
+        document.getElementById('workout-duration-input').value = formattedTime;
     }
 
     // Fai partire il timer immediatamente all'apertura della pagina (ogni 1 secondo)
