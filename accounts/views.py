@@ -6,8 +6,17 @@ from .models import Profile
 # Create your views here.
 
 
+@login_required
 def profile(request):
-    return render(request, 'accounts/profile.html')
+    profile_obj = Profile.objects.get(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = ProfileForm(instance=profile_obj)
+    return render(request, 'accounts/profile.html', {'form': form, 'user': request.user})
 
 def register(request):
     if request.method == 'POST':

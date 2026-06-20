@@ -3,9 +3,6 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Profile
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES)
-    
     class Meta:
         model = CustomUser
         fields = ('username', 'email', 'password1', 'password2', 'role')
@@ -14,12 +11,6 @@ class CustomUserCreationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ('bio', 'profile_picture')
-
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -35,3 +26,33 @@ class LoginForm(forms.Form):
             'placeholder': 'Password'
         })
     )
+
+
+class ProfileForm(forms.ModelForm): 
+    class Meta:
+        model = Profile
+        fields = ['name', 'last_name', 'bio', 'address', 'phone_number', 'weight', 'height', 'age']
+        
+        labels = {
+            'name': 'Nome',
+            'last_name': 'Cognome',
+            'bio': 'Biografia / Note',
+            'address': 'Indirizzo',
+            'phone_number': 'Numero di Telefono',
+            'weight': 'Peso attuale (kg)',
+            'height': 'Altezza (cm)',
+            'age': 'Età',
+        }
+        
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Inserisci il tuo nome'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Inserisci il tuo cognome'}),
+            'bio': forms.Textarea(attrs={'placeholder': 'Racconta qualcosa di te...', 'rows': 3}),
+            'address': forms.TextInput(attrs={'placeholder': 'Via Roma 10'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': '3331234567'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

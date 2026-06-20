@@ -25,17 +25,16 @@ class CustomUser(AbstractUser):
         return self.role == 'coach'
 
 class Profile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True, null=True)
+    user            = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    name            = models.TextField(blank=True, null=True)
+    last_name       = models.TextField(blank=True, null=True)
+    bio             = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    weight = models.FloatField(blank=True, null=True)
-    height = models.FloatField(blank=True, null=True)
-    age = models.IntegerField(blank=True, null=True)
-    
-
-
+    address         = models.CharField(max_length=255, blank=True, null=True)
+    phone_number    = models.CharField(max_length=20, blank=True, null=True)
+    weight          = models.FloatField(blank=True, null=True)
+    height          = models.FloatField(blank=True, null=True)
+    age             = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):

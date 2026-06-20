@@ -1,6 +1,7 @@
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from .models import Profile
 
 User = get_user_model()
 
@@ -20,10 +21,14 @@ def create_default_users(sender, **kwargs):
     
     # Utente di prova
     if not User.objects.filter(username='Elsaid', email='test@example.com').exists():
-        User.objects.create_user(
+        u = User.objects.create_user(
             username='Elsaid',
             email='test@example.com',
             password='Firenze1',
             role='user'
         )
+        Profile.objects.create(user=u)
         print("✅ Utente di prova 'Elsaid' creato")
+        print("✅ Profilo di prova 'Elsaid' creato")
+        
+   
