@@ -4,3 +4,4 @@ __pycache__/
 *.log
 EOF
 db.sqlite3
+media

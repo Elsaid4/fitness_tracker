@@ -31,7 +31,7 @@ class LoginForm(forms.Form):
 class ProfileForm(forms.ModelForm): 
     class Meta:
         model = Profile
-        fields = ['name', 'last_name', 'bio', 'address', 'phone_number', 'weight', 'height', 'date_of_birth']
+        fields = ['name', 'last_name','profile_picture', 'bio', 'address', 'phone_number', 'weight', 'height', 'date_of_birth']
         
         labels = {
             'name': 'Nome',

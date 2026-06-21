@@ -17,7 +17,7 @@ def profile_detail(request):
 def profile(request):
     profile_obj = Profile.objects.get(user=request.user)
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile_obj)
+        form = ProfileForm(request.POST, request.FILES, instance=profile_obj)
         if form.is_valid():
             form.save()
             return render(request, 'accounts/profile_detail.html', {'form': form, 'user': request.user})
