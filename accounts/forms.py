@@ -49,7 +49,8 @@ class ProfileForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Cognome'}),
             'bio': forms.Textarea(attrs={'placeholder': 'Racconta qualcosa di te...', 'rows': 3}),
             'address': forms.TextInput(attrs={'placeholder': 'Via Roma 10'}),
-            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'date_of_birth': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):

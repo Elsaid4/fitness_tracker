@@ -18,19 +18,18 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile_detail' %}">Profile</a>
-                    </li>
                 </ul>
 
                 {% if user_profile.profile_picture %}
-                    <img src="{{ user_profile.profile_picture.url }}" alt="Foto Profilo" class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                    <a class="nav-link" href="{% url 'profile_detail' %}"><img src="{{ user_profile.profile_picture.url }}" alt="Foto Profilo" class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;"></a>
                 {% else %}
-                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 48px; height: 48px; font-size: 24px;">
-                        {{ user_profile.name|slice:":1" }}{{ user_profile.last_name|slice:":1" }}
-                    </div>
+                    <a class="nav-link" href="{% url 'profile_detail' %}">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 48px; height: 48px; font-size: 24px;">
+                            {{ user_profile.name|slice:":1" }}{{ user_profile.last_name|slice:":1" }}
+                        </div>
+                    </a>
                 {% endif %}
-                <span class="navbar-text me-3 text-light">{{ user.username }}</span>
+                <a class="nav-link" href="{% url 'profile_detail' %}"><span class="navbar-text me-3 text-light">{{ user.username }}</span></a>
                 <a class="btn btn-outline-light" href="{% url 'logout' %}">Logout</a>
             </div>
         </div>
