@@ -8,9 +8,9 @@ from .models import Profile
 
 @login_required
 def profile_detail(request):
-    profile = Profile.objects.get(user=request.user)
+    # profile = Profile.objects.get(user=request.user)
     
-    return render(request, 'accounts/profile_detail.html', {'profile': profile})
+    return render(request, 'accounts/profile_detail.html')
 
 
 @login_required
@@ -20,7 +20,7 @@ def profile(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile_obj)
         if form.is_valid():
             form.save()
-            return render(request, 'accounts/profile_detail.html', {'form': form, 'user': request.user})
+            return render(request, 'accounts/profile_detail.html')
     else:
         form = ProfileForm(instance=profile_obj)
     return render(request, 'accounts/profile.html', {'form': form, 'user': request.user})

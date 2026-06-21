@@ -16,10 +16,15 @@ def dashboard(request):
     for we in workout_exercises:
         sets.extend(Set.objects.filter(workout_exercise=we))
 
-    return render(request, 'fitness/dashboard.html', {'user': request.user, 'workouts': workouts, 'exercises': workout_exercises, 'sets': sets})
+    return render(request, 'fitness/dashboard.html', {
+        'user': request.user, 
+        'workouts': workouts, 
+        'exercises': workout_exercises, 
+        'sets': sets
+        })
 
 
-
+@login_required
 def workout_view(request):
     workout = Workout(name=f'Workout di {request.user} - {timezone.now().strftime("%d-%m-%Y %H:%M:%S")}')
     exercises = []
@@ -27,7 +32,12 @@ def workout_view(request):
     total_weight = 0
     
 
-    return render(request, 'fitness/workout.html', {'workout': workout, 'exercises': exercises, 'all_exercises': all_exercises, 'tot_weight': total_weight})
+    return render(request, 'fitness/workout.html', {
+        'workout': workout, 
+        'exercises': exercises, 
+        'all_exercises': all_exercises, 
+        'tot_weight': total_weight 
+    })
 
 @login_required
 def save_workout(request, workout_name):

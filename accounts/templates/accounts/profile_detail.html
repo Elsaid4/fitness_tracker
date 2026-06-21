@@ -6,16 +6,16 @@
         <div class="col-md-6 border p-4 rounded bg-light-subtle shadow-sm">
             
             <div class="d-flex align-items-center mb-4 border-bottom pb-3">
-                {% if profile.profile_picture %}
-                    <img src="{{ profile.profile_picture.url }}" alt="Foto Profilo" class="rounded-circle me-3" style="width: 64px; height: 64px; object-fit: cover;">
+                {% if user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture.url }}" alt="Foto Profilo" class="rounded-circle me-3" style="width: 64px; height: 64px; object-fit: cover;">
                 {% else %}
                     <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 64px; height: 64px; font-size: 24px;">
-                        {{ profile.name|slice:":1" }}{{ profile.last_name|slice:":1" }}
+                        {{ user_profile.name|slice:":1" }}{{ user_profile.last_name|slice:":1" }}
                     </div>
                 {% endif %}
                 <div>
-                    <h2 class="mb-0 fw-bold">{{ profile.name }} {{ profile.last_name }}</h2>
-                    <p class="text-muted mb-0">@{{ profile.user.username }}</p>
+                    <h2 class="mb-0 fw-bold">{{ user_profile.name }} {{ user_profile.last_name }}</h2>
+                    <p class="text-muted mb-0">@{{ user_profile.user.username }}</p>
                 </div>
             </div>
 
@@ -24,21 +24,21 @@
                 <div class="mb-3">
                     <label class="form-label text-muted small fw-semibold text-uppercase">Biografia / Note</label>
                     <div class="p-2 border rounded bg-body-tertiary">
-                        {{ profile.bio|default:"Nessuna biografia inserita" }}
+                        {{ user_profile.bio|default:"Nessuna biografia inserita" }}
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label text-muted small fw-semibold text-uppercase">Indirizzo</label>
                     <div class="p-2 border rounded bg-body-tertiary">
-                        {{ profile.address|default:"Non specificato" }}
+                        {{ user_profile.address|default:"Non specificato" }}
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label text-muted small fw-semibold text-uppercase">Numero di Telefono</label>
                     <div class="p-2 border rounded bg-body-tertiary">
-                        {{ profile.phone_number|default:"Non specificato" }}
+                        {{ user_profile.phone_number|default:"Non specificato" }}
                     </div>
                 </div>
 
@@ -46,8 +46,8 @@
                     <div class="col-4">
                         <label class="form-label text-muted small fw-semibold text-uppercase">Peso</label>
                         <div class="p-2 border rounded bg-body-tertiary text-center fw-bold">
-                            {% if profile.weight %}
-                                {{ profile.weight }} kg
+                            {% if user_profile.weight %}
+                                {{ user_profile.weight }} kg
                                 {% else %}-
                             {% endif %}
                         </div>
@@ -55,8 +55,8 @@
                     <div class="col-4">
                         <label class="form-label text-muted small fw-semibold text-uppercase">Altezza</label>
                         <div class="p-2 border rounded bg-body-tertiary text-center fw-bold">
-                            {% if profile.height %}
-                                {{ profile.height }} cm
+                            {% if user_profile.height %}
+                                {{ user_profile.height }} cm
                                 {% else %}-
                             {% endif %}
                         </div>
@@ -64,7 +64,7 @@
                     <div class="col-4">
                         <label class="form-label text-muted small fw-semibold text-uppercase">Età</label>
                         <div class="p-2 border rounded bg-body-tertiary text-center fw-bold">
-                            {{ profile.age|default:"-" }} anni
+                            {{ user_profile.age|default:"-" }} anni
                         </div>
                     </div>
                 </div>
