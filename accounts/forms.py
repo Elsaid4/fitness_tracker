@@ -31,7 +31,7 @@ class LoginForm(forms.Form):
 class ProfileForm(forms.ModelForm): 
     class Meta:
         model = Profile
-        fields = ['name', 'last_name', 'bio', 'address', 'phone_number', 'weight', 'height', 'age']
+        fields = ['name', 'last_name', 'bio', 'address', 'phone_number', 'weight', 'height', 'date_of_birth']
         
         labels = {
             'name': 'Nome',
@@ -41,15 +41,15 @@ class ProfileForm(forms.ModelForm):
             'phone_number': 'Numero di Telefono',
             'weight': 'Peso attuale (kg)',
             'height': 'Altezza (cm)',
-            'age': 'Età',
+            'date_of_birth': 'Data di nascita',
         }
         
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Inserisci il tuo nome'}),
-            'last_name': forms.TextInput(attrs={'placeholder': 'Inserisci il tuo cognome'}),
+            'name': forms.TextInput(attrs={'placeholder': 'Nome'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Cognome'}),
             'bio': forms.Textarea(attrs={'placeholder': 'Racconta qualcosa di te...', 'rows': 3}),
             'address': forms.TextInput(attrs={'placeholder': 'Via Roma 10'}),
-            'phone_number': forms.TextInput(attrs={'placeholder': '3331234567'}),
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }
 
     def __init__(self, *args, **kwargs):

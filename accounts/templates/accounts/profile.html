@@ -5,6 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6 border p-4 rounded bg-light-subtle shadow-sm">
             <h1 class="mb-4">Profilo di {{ user.username }}</h1>
+            <!-- <p>Età dell'utente: {{ user.profile.age }} anni</p> -->
             
             <form method="post">
                 {% csrf_token %}
@@ -13,15 +14,9 @@
                     <div class="alert alert-danger">{{ form.non_field_errors }}</div>
                 {% endif %}
 
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+                <div class="my-custom-form">
+                    {{ form.as_p }}
+                </div>  
                 
                 <div class="d-flex justify-content-between mt-4">
                     <a href="{% url 'dashboard' %}" class="btn btn-secondary">Annulla</a>
@@ -31,4 +26,11 @@
         </div>
     </div>
 </div>
+<style>
+    .my-custom-form p label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+</style>
 {% endblock %}

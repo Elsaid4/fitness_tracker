@@ -7,13 +7,20 @@ from .models import Profile
 
 
 @login_required
+def profile_detail(request):
+    profile = Profile.objects.get(user=request.user)
+    
+    return render(request, 'accounts/profile_detail.html', {'profile': profile})
+
+
+@login_required
 def profile(request):
     profile_obj = Profile.objects.get(user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile_obj)
         if form.is_valid():
             form.save()
-            return redirect('dashboard')
+            return render(request, 'accounts/profile_detail.html', {'form': form, 'user': request.user})
     else:
         form = ProfileForm(instance=profile_obj)
     return render(request, 'accounts/profile.html', {'form': form, 'user': request.user})
@@ -31,6 +38,9 @@ def register(request):
     return render(request, 'accounts/register.html', {'form': form})
 
 def login(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():

@@ -8,13 +8,25 @@
             
             <form method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
+                <div class="my-custom-form">
+                    {{ form.as_p }}
+                </div>
                 <button type="submit" class="btn btn-primary">Register</button>
                 <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .my-custom-form p label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 0.95rem;
+    }
+</style>
 
 {% endblock %}
 
