@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import Workout, Set, Exercise, WorkoutExercise
-import json
+from django.views.generic import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 @login_required
@@ -22,6 +23,27 @@ def dashboard(request):
         'exercises': workout_exercises, 
         'sets': sets
         })
+
+
+class WorkoutDetailView(LoginRequiredMixin, DetailView):
+    model = Workout
+    template_name = 'fitness/workout_detail.html'
+    context_object_name = 'workout'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        workout = self.get_object()
+        
+        workout_exercises = WorkoutExercise.objects.filter(workout=workout)
+        
+        sets_by_exercise = {}
+        for we in workout_exercises:
+            sets_by_exercise[we] = Set.objects.filter(workout_exercise=we)
+            
+        context['workout_exercises'] = workout_exercises
+        context['sets_by_exercise'] = sets_by_exercise
+        return context
+
 
 
 @login_required
@@ -73,17 +95,3 @@ def save_workout(request, workout_name):
                 )
         return redirect('workout_detail', workout_id=workout.id)
     return redirect('dashboard')
-
-@login_required
-def workout_detail(request, workout_id):
-    workout = get_object_or_404(Workout, id=workout_id, user=request.user)
-    workout_exercises = WorkoutExercise.objects.filter(workout=workout)
-    sets_by_exercise = {}
-    for we in workout_exercises:
-        sets_by_exercise[we] = Set.objects.filter(workout_exercise=we)
-    
-    return render(request, 'fitness/workout_detail.html', {
-        'workout': workout,
-        'workout_exercises': workout_exercises,
-        'sets_by_exercise': sets_by_exercise
-    })

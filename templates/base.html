@@ -24,12 +24,18 @@
                     <a class="nav-link" href="{% url 'profile_detail' %}"><img src="{{ user_profile.profile_picture.url }}" alt="Foto Profilo" class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;"></a>
                 {% else %}
                     <a class="nav-link" href="{% url 'profile_detail' %}">
-                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 48px; height: 48px; font-size: 24px;">
+                        {% if user_profile.name and user_profile.last_name %}
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold text-uppercase shadow-sm" style="width: 50px; height: 50px; font-size: 18px;">
                             {{ user_profile.name|slice:":1" }}{{ user_profile.last_name|slice:":1" }}
                         </div>
+                    {% else %}
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold text-uppercase shadow-sm" style="width: 50px; height: 50px; font-size: 18px;">
+                            {{ request.user.username|slice:":1" }}
+                        </div>
+                    {% endif %}
                     </a>
                 {% endif %}
-                <a class="nav-link" href="{% url 'profile_detail' %}"><span class="navbar-text me-3 text-light">{{ user.username }}</span></a>
+                <a class="nav-link ms-2" href="{% url 'profile_detail' %}"><span class="navbar-text me-3 text-light">@{{ user.username }}</span></a>
                 <a class="btn btn-outline-light" href="{% url 'logout' %}">Logout</a>
             </div>
         </div>
