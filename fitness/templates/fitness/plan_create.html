@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white p-4">
+                    <h3 class="card-title mb-0"><i class="bi bi-journal-plus me-2"></i> Crea Nuovo Programma d'Allenamento</h3>
+                    <p class="mb-0 text-white-50 small">Crea il contenitore principale e inserisci i singoli workout giornalieri (Giorno A, Giorno B, ecc.).</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="post" novalidate id="plan-form">
+                        {% csrf_token %}
+                        
+                        <h4 class="mb-3 text-primary fw-bold">Dettagli Scheda</h4>
+                         {{ form.as_p }}
+
+                        <hr class="my-4">
+
+                        <h4 class="mb-1 text-primary fw-bold">Workout</h4>
+                        <p class="text-muted small mb-3">Definisci i giorni di allenamento che compongono questa scheda</p>
+
+                        {{ formset.management_form }}
+
+                        <div id="workout-form-container">
+                            {% for w_form in formset %}
+                                <div class="workout-form-row mb-3 bg-light p-3 rounded border">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <span class="badge bg-secondary text-white fw-bold p-2 row-number"></span>
+                                        
+                                        <div class="flex-grow-1">
+                                            {{ w_form.name }}
+                                            {{ w_form.id }} 
+                                        </div>
+                                        
+                                        <button type="button" class="btn btn-outline-danger remove-workout-btn">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                    {% if w_form.name.errors %}
+                                        <div class="text-danger small mt-1">{{ w_form.name.errors|striptags }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid mt-2">
+                            <button type="button" id="add-workout-btn" class="btn btn-outline-primary btn-sm">
+                                Aggiungi un altro Workout
+                            </button>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">Annulla</a>
+                            <button type="submit" class="btn btn-primary px-4">Crea Programma</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('#workout-form-container');
+    const addButton = document.querySelector('#add-workout-btn');
+    
+    const totalForms = document.querySelector('input[id$="-TOTAL_FORMS"]');
+    
+    let prefix = 'workouts';
+    if (totalForms) {
+        prefix = totalForms.name.split('-')[0];
+    }
+
+    function updateRowNumbers() {
+        const rows = container.querySelectorAll('.workout-form-row');
+        rows.forEach((row, index) => {
+            row.querySelector('.row-number').textContent = `#${index + 1}`;
+        });
+    }
+    updateRowNumbers();
+
+    addButton.addEventListener('click', function() {
+        const rows = container.querySelectorAll('.workout-form-row');
+        const formNum = rows.length; 
+
+        const newRow = rows[rows.length - 1].cloneNode(true);
+
+        const input = newRow.querySelector('input[type="text"]');
+        if(input) input.value = '';
+
+        const hiddenId = newRow.querySelector('input[type="hidden"]');
+        if(hiddenId) hiddenId.value = '';
+
+        const errorDiv = newRow.querySelector('.text-danger');
+        if(errorDiv) errorDiv.remove();
+
+        const regex = new RegExp(`${prefix}-(\\d+)-`, 'g');
+        newRow.innerHTML = newRow.innerHTML.replace(regex, `${prefix}-${formNum}-`);
+
+        container.appendChild(newRow);
+
+        totalForms.setAttribute('value', formNum + 1);
+        
+        updateRowNumbers();
+    });
+
+    container.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-workout-btn')) {
+            const rows = container.querySelectorAll('.workout-form-row');
+            
+            if (rows.length > 1) {
+                const rowToDelete = e.target.closest('.workout-form-row');
+                rowToDelete.remove();
+
+                const currentRows = container.querySelectorAll('.workout-form-row');
+                totalForms.setAttribute('value', currentRows.length);
+
+                currentRows.forEach((row, index) => {
+                    const regex = new RegExp(`${prefix}-(\\d+)-`, 'g');
+                    row.innerHTML = row.innerHTML.replace(regex, `${prefix}-${index}-`);
+                    
+                    const txtInput = row.querySelector('input[type="text"]');
+                    if(txtInput) {
+                        txtInput.setAttribute('name', `${prefix}-${index}-name`);
+                        txtInput.setAttribute('id', `id_${prefix}-${index}-name`);
+                    }
+                });
+
+                updateRowNumbers();
+            } else {
+                alert("Un programma deve contenere almeno un giorno di allenamento!");
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

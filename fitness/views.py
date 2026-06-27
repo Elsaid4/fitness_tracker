@@ -1,30 +1,79 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import get_user_model
-
+from django.db import transaction
 from accounts.models import Follow
+from fitness.forms import TrainingPlanForm, WorkoutInlineFormSet
 from .models import TrainingPlan, Workout, Set, Exercise, WorkoutExercise
-from django.views.generic import DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 @login_required
 def dashboard(request):
-    workouts = Workout.objects.filter(user=request.user).order_by('-timestamp')
-    workout_exercises = []
-    sets = []
-    for w in workouts:
-        workout_exercises.extend(WorkoutExercise.objects.filter(workout=w))
+    if request.user.is_coach():
+        plans = TrainingPlan.objects.filter(coach=request.user).order_by('-created_at')
+        workouts = []
+        for p in plans:
+            workouts.extend(Workout.objects.filter(plan=p))
 
-    for we in workout_exercises:
-        sets.extend(Set.objects.filter(workout_exercise=we))
+        return render(request, 'fitness/dashboard.html', {
+            'user': request.user, 
+            'workouts': workouts, 
+            'plans': plans
+            })
+    else:
+        workouts = Workout.objects.filter(user=request.user).order_by('-timestamp')
+        workout_exercises = []
+        sets = []
+        for w in workouts:
+            workout_exercises.extend(WorkoutExercise.objects.filter(workout=w))
 
-    return render(request, 'fitness/dashboard.html', {
-        'user': request.user, 
-        'workouts': workouts, 
-        'exercises': workout_exercises, 
-        'sets': sets
-        })
+        for we in workout_exercises:
+            sets.extend(Set.objects.filter(workout_exercise=we))
+
+        return render(request, 'fitness/dashboard.html', {
+            'user': request.user, 
+            'workouts': workouts, 
+            'exercises': workout_exercises, 
+            'sets': sets
+            })
+
+class PlanDetailView(LoginRequiredMixin, DetailView):
+    model = TrainingPlan
+    template_name = 'fitness/plan_detail.html'
+    context_object_name = 'plan'
+
+
+@login_required
+def create_plan_view(request):
+    if request.method == 'POST':
+        form = TrainingPlanForm(request.POST)
+        formset = WorkoutInlineFormSet(request.POST)
+        
+        if form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                plan = form.save(commit=False)
+                plan.coach = request.user
+                plan.save()
+                
+                formset.instance = plan
+                workouts = formset.save(commit=False)
+                
+                for workout in workouts:
+                    workout.user = request.user 
+                    workout.is_template = True
+                    workout.save()
+            
+            return redirect('plan_detail', pk=plan.pk)
+    else:
+        form = TrainingPlanForm()
+        formset = WorkoutInlineFormSet()
+        
+    return render(request, 'fitness/plan_create.html', {
+        'form': form,
+        'formset': formset
+    })
 
 User = get_user_model()
 class CoachListView(LoginRequiredMixin, ListView):
@@ -129,6 +178,8 @@ def save_workout(request, workout_name):
             user=current_user,
             duration=duration_str
         )
+        if current_user.is_coach():
+            workout.is_template = True
         # Ottieni tutti gli indici degli esercizi inviati
         exercise_indices = [k.split('_')[1] for k in request.POST.keys() if '_name' in k]
 

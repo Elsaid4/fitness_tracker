@@ -9,4 +9,6 @@ urlpatterns = [
     path('coach_list/', views.CoachListView.as_view(), name='coach_list'),
     path('coach_detail/<int:pk>', views.CoachDetailView.as_view(), name='coach_detail'),
     path('coach/<int:coach_id>/toggle-follow/', views.toggle_follow_view, name='toggle_follow'),
+    path('plan_detail/<int:pk>', views.PlanDetailView.as_view(), name='plan_detail'),
+    path('plan_create/', views.create_plan_view, name='plan_create'),
 ]

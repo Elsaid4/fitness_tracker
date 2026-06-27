@@ -28,12 +28,13 @@ class Workout(models.Model):
     """
     Rappresenta la singola sessione di allenamento
     """
-    name        = models.CharField(max_length=100)
-    timestamp   = models.DateTimeField(auto_now_add=True)
-    duration    = models.CharField(max_length=8, default="00:00:00")
-    user        = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='workouts')
-    plan        = models.ForeignKey(TrainingPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name='workouts')
-    is_template = models.BooleanField(default=False) # True se è un workout creato dal coach come modello
+    name            = models.CharField(max_length=100)
+    timestamp       = models.DateTimeField(auto_now_add=True)
+    duration        = models.CharField(max_length=8, default="00:00:00")
+    user            = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='workouts')
+    plan            = models.ForeignKey(TrainingPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name='workouts')
+    is_template     = models.BooleanField(default=False)
+    parent_workout  = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         user_part = f" by {self.user}" if self.user else ""
