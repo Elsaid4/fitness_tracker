@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Workout, Set, Exercise, WorkoutExercise
-from django.views.generic import DetailView
+from django.contrib.auth import get_user_model
+
+from accounts.models import Follow
+from .models import TrainingPlan, Workout, Set, Exercise, WorkoutExercise
+from django.views.generic import DetailView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
@@ -24,6 +26,61 @@ def dashboard(request):
         'sets': sets
         })
 
+User = get_user_model()
+class CoachListView(LoginRequiredMixin, ListView):
+    model = get_user_model()
+    template_name = 'fitness/coach_list.html'
+    context_object_name = 'coaches'  
+
+    def get_queryset(self):
+        queryset = User.objects.filter(role='coach')
+        
+        scelta_filtro = self.request.GET.get('filter')
+        
+        if scelta_filtro == 'following' and self.request.user.is_authenticated:
+            queryset = queryset.filter(followers__user=self.request.user)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        if self.request.user.is_authenticated:
+            followed_coaches_ids = self.request.user.following.values_list('coach_id', flat=True)
+            context['followed_coaches_ids'] = list(followed_coaches_ids)
+        
+        context['current_filter'] = self.request.GET.get('filter', 'all')
+        return context
+
+class CoachDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'fitness/coach_detail.html'
+    context_object_name = 'coach'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        coach = self.get_object()
+        
+        context['plans'] = TrainingPlan.objects.filter(coach=coach).prefetch_related('workouts')
+        context['single_workouts'] = Workout.objects.filter(user=coach, plan__isnull=True, is_template=True)
+        if self.request.user.is_authenticated:
+            context['is_following'] = Follow.objects.filter(user=self.request.user, coach=coach).exists()
+        else:
+            context['is_following'] = False     
+        return context
+
+@login_required
+def toggle_follow_view(request, coach_id):
+    coach = get_object_or_404(User, id=coach_id, role='coach')
+    
+    if coach == request.user:
+        return redirect('coach_list')
+
+    (follow_relation, created) = Follow.objects.get_or_create(user=request.user, coach=coach)
+
+    if not created:
+        follow_relation.delete()
+    
+    return redirect(request.META.get('HTTP_REFERER', 'coach_list'))
 
 class WorkoutDetailView(LoginRequiredMixin, DetailView):
     model = Workout
@@ -93,5 +150,5 @@ def save_workout(request, workout_name):
                     weight              = weight,
                     completed           = is_completed
                 )
-        return redirect('workout_detail', workout_id=workout.id)
+        return redirect('workout_detail', pk=workout.id)
     return redirect('dashboard')

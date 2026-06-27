@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-start mb-3">
+    <div class="col-12">
+        <a href="{% url 'coach_list' %}" class="btn btn-secondary"><svg xmlns="http://w3.org" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-5 mt-3 ms-0 me-0 align-items-center bg-light p-4 rounded border shadow-sm">
+    <div class="col-md-2 col-sm-12 text-center">
+        {% if coach.profile.profile_picture %}
+            <img src="{{ coach.profile.profile_picture.url }}" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;">
+        {% else %}
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto fw-bold" style="width: 120px; height: 120px; font-size: 40px;">
+                {{ coach.username|upper|slice:":1" }}
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-9 col-sm-12">
+        <h1 class="fw-bold mb-1">{{ coach.profile.name }} {{ coach.profile.last_name }}</h1>
+        <p class="text-muted">Coach Professionista • @{{ coach.username }}</p>
+        <p class="lead">{{ coach.profile.bio|default:"Nessuna biografia disponibile." }}</p>
+    </div>
+    <div class="col-md-1 col-sm-12 p-0">
+            {% if request.user != coach %} {% if is_following %}
+                <a href="{% url 'toggle_follow' coach.id %}" class="btn btn-danger">Unfollow</a>
+            {% else %}
+                <a href="{% url 'toggle_follow' coach.id %}" class="btn btn-success">Follow</a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<h2 class="mb-4 fw-bold">Programmi d'Allenamento (Schede)</h2>
+
+<div class="row justify-content-center g-4">
+    {% for plan in plans %}
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ plan.name }}</h4>
+                    <span class="badge bg-light text-primary">{{ plan.workouts.count }} Workout</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-secondary">{{ plan.description }}</p>
+                    <h6 class="fw-bold border-bottom pb-2">Workout inclusi:</h6>
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for workout in plan.workouts.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span><i class="bi bi-play-circle me-2"></i>{{ workout.name }}</span>
+                                <a href="{% url 'workout_detail' workout.id %}" class="btn btn-sm btn-outline-secondary">Vedi</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-grid">
+                        <button class="btn btn-primary">Scarica Scheda Completa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Il coach non ha ancora creato programmi completi.</div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if single_workouts %}
+<h3 class="mt-5 mb-3 fw-bold">Workout Singoli</h3>
+<div class="row row-cols-1 row-cols-md-3 g-3 justify-content-center">
+    {% for w in single_workouts %}
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ w.name }}</h5>
+                    <p class="small text-muted">Durata stimata: {{ w.duration|default:"N/D" }}</p>
+                    <a href="{% url 'workout_detail' w.id %}" class="btn btn-sm btn-outline-primary w-100">Inizia ora</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

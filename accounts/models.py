@@ -47,3 +47,11 @@ class Profile(models.Model):
             today = date.today()
             return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
         return None
+
+class Follow(models.Model):
+    user        = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
+    coach       = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
+    timestamp   = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'coach')

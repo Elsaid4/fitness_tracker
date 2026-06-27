@@ -18,6 +18,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coach_list' %}">Tutti i Coach</a>
+                    </li>
                 </ul>
 
                 {% if user_profile.profile_picture %}
@@ -26,11 +29,11 @@
                     <a class="nav-link" href="{% url 'profile_detail' %}">
                         {% if user_profile.name and user_profile.last_name %}
                         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold text-uppercase shadow-sm" style="width: 50px; height: 50px; font-size: 18px;">
-                            {{ user_profile.name|slice:":1" }}{{ user_profile.last_name|slice:":1" }}
+                            {{ user_profile.name|upper|slice:":1" }}{{ user_profile.last_name|slice:":1" }}
                         </div>
                     {% else %}
                         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold text-uppercase shadow-sm" style="width: 50px; height: 50px; font-size: 18px;">
-                            {{ request.user.username|slice:":1" }}
+                            {{ request.user.username|upper|slice:":1" }}
                         </div>
                     {% endif %}
                     </a>

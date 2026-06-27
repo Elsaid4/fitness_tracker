@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Scegli il tuo Coach</h1>
+    <p class="text-muted">Trova un professionista, segui i suoi allenamenti e ricevi feedback personalizzati.</p>
+    <div class="d-flex gap-2 my-4">
+        <a href="{% url 'coach_list' %}" class="btn {% if current_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">Tutti i Coach</a>
+        <a href="{% url 'coach_list' %}?filter=following" class="btn {% if current_filter == 'following' %}btn-primary{% else %}btn-outline-primary{% endif %}">Coach che seguo</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
+        {% for coach in coaches %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border">
+                    <div class="card-body text-center">
+                        <a class="nav-link" href="{% url 'coach_detail' coach.id %}">
+                            {% if coach.profile.profile_picture %}
+                            <img src="{{ coach.profile.profile_picture.url }}" alt="Foto Coach" class="rounded-circle mb-3 shadow-sm" style="width: 90px; height: 90px; object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold text-uppercase shadow-sm" style="width: 90px; height: 90px; font-size: 28px;">
+                                {{ coach.username|upper|slice:":1" }}
+                            </div>
+                            {% endif %}
+                        </a>
+
+                        <h5 class="card-title fw-bold mb-0">{{ coach.profile.name|default:coach.username }} {{ coach.profile.last_name|default:"" }}</h5>
+                        <p class="text-muted small">@{{ coach.username }}</p>
+                        
+                        <p class="card-text text-start text-secondary text-truncate-3" style="font-size: 0.9rem; min-height: 60px;">
+                            {{ coach.profile.bio|default:"Questo coach non ha ancora inserito una biografia." }}
+                        </p>
+                        
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-top-0 p-3">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'coach_detail' coach.id %}" class="btn btn-outline-secondary btn-sm">Visualizza</a>
+                            {% if coach.id in followed_coaches_ids %}
+                                <a href="{% url 'toggle_follow' coach.id %}" class="btn btn-danger btn-sm">Smetti di seguire</a>
+                            {% else %}
+                                <a href="{% url 'toggle_follow' coach.id %}" class="btn btn-success btn-sm">Segui Coach</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center mt-5">
+                <p class="text-muted fs-5">Al momento non ci sono coach disponibili sulla piattaforma.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
